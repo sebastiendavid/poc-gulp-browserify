@@ -1,6 +1,6 @@
 'use strict';
 var _ = require('lodash');
-var hbs = require('./Handlebars.js');
+var hbs = require('handlebars');
 var Backbone = require('backbone');
 var Marionette;
 

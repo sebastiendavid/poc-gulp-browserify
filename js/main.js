@@ -16,3 +16,5 @@ var ctrl = new Module2();
 
 console.debug(view);
 console.debug(ctrl);
+
+view.render();

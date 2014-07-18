@@ -9,7 +9,7 @@ module.exports = Marionette.ItemView.extend({
     initialize: function () {
         console.info('Module1: initialize');
         this.model = new Backbone.Model({
-            foobar: 'foobar'
+            foobar: 0
         });
     }
 });
