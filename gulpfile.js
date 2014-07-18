@@ -1,4 +1,6 @@
 'use strict';
+var _ = require('lodash');
+var Q = require('q');
 var gulp = require('gulp');
 var browserify = require('browserify');
 var stringify = require('stringify');
@@ -7,11 +9,13 @@ var connect = require('connect');
 var http = require('http');
 var morgan = require('morgan');
 var serveStatic = require('serve-static');
-var Q = require('q');
-var _ = require('lodash');
 var portscanner = require('portscanner');
 var moment = require('moment');
 var mocha = require('gulp-mocha');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var jshint = require('gulp-jshint');
+var stylish = require('jshint-stylish');
 
 require('colors');
 
@@ -86,6 +90,23 @@ gulp.task('find:port', ['server:stop'], function () {
 });
 
 gulp.task('test', function () {
-    gulp.src('./test/**/*.spec.js', {read: false})
-        .pipe(mocha({reporter: 'spec'}));
+    gulp.src('./test/**/*.spec.js', {
+        read: false
+    }).pipe(mocha({
+        reporter: 'spec'
+    }));
+});
+
+gulp.task('uglify', function () {
+    gulp.src('./dist/app.js')
+        .pipe(uglify())
+        .pipe(rename('app.min.js'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('lint', function () {
+    gulp.src('./js/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter(stylish))
+        .pipe(jshint.reporter('fail'));
 });
