@@ -32,9 +32,7 @@ var log = {
     }
 };
 
-gulp.task('default', function () {
-    log.info('no default task');
-});
+gulp.task('default', ['server']);
 
 gulp.task('browserify', function () {
     browserify()
