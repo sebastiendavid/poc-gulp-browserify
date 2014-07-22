@@ -2,12 +2,7 @@
 var _ = require('lodash');
 var hbs = require('handlebars');
 var Backbone = require('backbone');
-var Marionette;
-
-Backbone.$ = require('jquery');
-require('backbone.babysitter');
-require('backbone.wreqr');
-Marionette = require('backbone.marionette');
+var Marionette = Backbone.Marionette;
 
 Marionette.Renderer.render = function (template, data) {
     if (_.isFunction(template)) {

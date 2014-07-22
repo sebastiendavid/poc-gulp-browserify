@@ -42,6 +42,12 @@ gulp.task('browserify', function () {
     browserify()
         .transform(stringify(['.hbs', '.txt', '.html', '.json']))
         .add('./js/main.js')
+        .require('./js/jquery.js', {expose: 'jquery'})
+        .require('./js/lodash.js', {expose: 'lodash'})
+        .require('./js/handlebars.js', {expose: 'handlebars'})
+        .require('./js/moment.js', {expose: 'moment'})
+        .require('./js/backbone.js', {expose: 'backbone'})
+        .require('./js/marionette.js', {expose: 'marionette'})
         .bundle()
         .pipe(sourceStream('app.js'))
         .pipe(gulp.dest('./dist'));

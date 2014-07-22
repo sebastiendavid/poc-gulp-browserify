@@ -1,5 +1,5 @@
 'use strict';
-var Marionette = require('./Marionette.js');
+var Marionette = require('marionette');
 var Backbone = require('backbone');
 
 module.exports = Marionette.ItemView.extend({

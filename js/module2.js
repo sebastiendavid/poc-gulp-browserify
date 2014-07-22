@@ -1,5 +1,5 @@
 'use strict';
-var Marionette = require('./Marionette.js');
+var Marionette = require('marionette');
 module.exports = Marionette.Controller.extend({
     initialize: function () {
         console.info('Module2: initialize');
