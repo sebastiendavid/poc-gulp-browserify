@@ -39,18 +39,30 @@ var log = {
 gulp.task('default', ['server']);
 
 gulp.task('browserify', function () {
-    browserify()
-        .transform(stringify(['.hbs', '.txt', '.html', '.json']))
-        .add('./js/main.js')
-        .require('./js/jquery.js', {expose: 'jquery'})
-        .require('./js/lodash.js', {expose: 'lodash'})
-        .require('./js/handlebars.js', {expose: 'handlebars'})
-        .require('./js/moment.js', {expose: 'moment'})
-        .require('./js/backbone.js', {expose: 'backbone'})
-        .require('./js/marionette.js', {expose: 'marionette'})
-        .bundle()
-        .pipe(sourceStream('app.js'))
-        .pipe(gulp.dest('./dist'));
+    var b = function (src, finalname, folder, required, opts) {
+        var b = browserify()
+            .transform(stringify(['.hbs', '.txt', '.html', '.json']))
+            .add(src);
+
+        _.each(required, function (lib) {
+            b.require(lib.path, lib.opts);
+        });
+
+        b.bundle(opts)
+            .pipe(sourceStream(finalname))
+            .pipe(gulp.dest(folder));
+    };
+
+    b('./js/main.js', 'app.js', './dist', [
+        { path: './js/jquery.js', opts: { expose: 'jquery' } },
+        { path: './js/lodash.js', opts: { expose: 'lodash' } },
+        { path: './js/handlebars.js', opts: { expose: 'handlebars' } },
+        { path: './js/moment.js', opts: { expose: 'moment' } },
+        { path: './js/backbone.js', opts: { expose: 'backbone' } },
+        { path: './js/marionette.js', opts: { expose: 'marionette' } },
+    ]);
+
+    b('./js/ext.js', 'ext.js', './dist', [], { standalone: 'smartfocus.ext' });
 });
 
 gulp.task('connect', ['find:port'], function () {

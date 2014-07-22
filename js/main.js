@@ -18,3 +18,7 @@ console.debug(view);
 console.debug(ctrl);
 
 view.render();
+
+window.hello = function () {
+    window.smartfocus.ext.hello();
+};
