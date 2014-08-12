@@ -17,6 +17,7 @@ var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
+var minifyHTML = require('gulp-minify-html');
 var minify = false;
 
 require('colors');
@@ -39,8 +40,8 @@ var log = {
 };
 
 gulp.task('default', ['server']);
-gulp.task('server', ['browserify', 'sass', 'watch', 'connect']);
-gulp.task('dist', ['minify', 'lint', 'test', 'browserify', 'sass']);
+gulp.task('server', ['browserify', 'sass', 'html', 'watch', 'connect']);
+gulp.task('dist', ['minify', 'lint', 'test', 'browserify', 'sass', 'html']);
 
 gulp.task('browserify', function () {
     var task = gulp.src('./src/js/main.js')
@@ -64,7 +65,6 @@ gulp.task('browserify', function () {
 gulp.task('connect', ['find:port'], function () {
     var app = connect()
         .use(morgan('dev'))
-        .use(serveStatic('./src/'))
         .use(serveStatic('./dist/'));
     server = http.createServer(app).listen(port);
     log.info('server is listening to ' + port);
@@ -74,6 +74,7 @@ gulp.task('watch', function () {
     gulp.watch('./src/js/**/*.js', ['browserify']);
     gulp.watch('./src/html/**/*.html', ['browserify']);
     gulp.watch('./src/scss/**/*.scss', ['sass']);
+    gulp.watch('./src/index.html', ['html']);
     gulp.watch('gulpfile.js', ['server:stop', 'connect']);
 });
 
@@ -132,6 +133,16 @@ gulp.task('sass', function () {
     if (minify) {
         task.pipe(minifyCSS())
             .pipe(rename('main.min.css'))
+            .pipe(gulp.dest('./dist'));
+    }
+});
+
+gulp.task('html', function () {
+    var task = gulp.src('./src/index.html')
+        .pipe(gulp.dest('./dist'));
+
+    if (minify) {
+        task.pipe(minifyHTML())
             .pipe(gulp.dest('./dist'));
     }
 });
