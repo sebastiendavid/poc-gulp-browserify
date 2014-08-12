@@ -2,17 +2,12 @@
 'use strict';
 var _ = require('lodash');
 var assert = require('assert');
-var proxyquire = require('proxyquire');
 
 describe('gallery.js', function () {
     var galleryCtrl;
 
     beforeEach(function () {
-        galleryCtrl = proxyquire('../src/js/gallery.js', {
-            angular: {
-                '@noCallThru': true
-            }
-        });
+        galleryCtrl = require('../src/js/gallery.js');
     });
 
     it('should gallery controller be a function', function () {
