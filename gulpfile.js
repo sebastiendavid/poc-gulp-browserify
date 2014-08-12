@@ -18,6 +18,7 @@ var stylish = require('jshint-stylish');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var minifyHTML = require('gulp-minify-html');
+var handlebars = require('gulp-compile-handlebars');
 var minify = false;
 
 require('colors');
@@ -138,8 +139,12 @@ gulp.task('sass', function () {
 });
 
 gulp.task('html', function () {
-    var task = gulp.src('./src/index.html')
-        .pipe(gulp.dest('./dist'));
+    var task = gulp.src('./src/index.hbs')
+        .pipe(handlebars({
+            minify: minify
+        }))
+        .pipe(rename('index.html'))
+        .pipe(gulp.dest('dist'));
 
     if (minify) {
         task.pipe(minifyHTML())
