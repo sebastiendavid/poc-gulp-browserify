@@ -1,1 +1,1 @@
-poc with gulp / browserify / marionette / mocha
+poc with gulp / browserify / angular / mocha
