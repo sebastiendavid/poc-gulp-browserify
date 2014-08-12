@@ -2,9 +2,8 @@
 var _ = require('lodash');
 var Q = require('q');
 var gulp = require('gulp');
-var browserify = require('browserify');
+var browserify = require('gulp-browserify');
 var stringify = require('stringify');
-var sourceStream = require('vinyl-source-stream');
 var connect = require('connect');
 var http = require('http');
 var morgan = require('morgan');
@@ -16,6 +15,9 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
+var sass = require('gulp-sass');
+var minifyCSS = require('gulp-minify-css');
+var minify = false;
 
 require('colors');
 
@@ -37,48 +39,43 @@ var log = {
 };
 
 gulp.task('default', ['server']);
+gulp.task('server', ['browserify', 'sass', 'watch', 'connect']);
+gulp.task('dist', ['minify', 'lint', 'test', 'browserify', 'sass']);
 
 gulp.task('browserify', function () {
-    var b = function (src, finalname, folder, required, opts) {
-        var b = browserify()
-            .transform(stringify(['.hbs', '.txt', '.html', '.json']))
-            .add(src);
+    var task = gulp.src('./src/js/main.js')
+        .pipe(browserify())
+        .on('prebundle', function (bundle) {
+            bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
+            bundle.require(require.resolve('./src/js/angular.js'), {
+                expose: 'angular'
+            });
+        })
+        .pipe(rename('app.js'))
+        .pipe(gulp.dest('./dist'));
 
-        _.each(required, function (lib) {
-            b.require(lib.path, lib.opts);
-        });
-
-        b.bundle(opts)
-            .pipe(sourceStream(finalname))
-            .pipe(gulp.dest(folder));
-    };
-
-    b('./js/main.js', 'app.js', './dist', [
-        { path: './js/jquery.js', opts: { expose: 'jquery' } },
-        { path: './js/lodash.js', opts: { expose: 'lodash' } },
-        { path: './js/handlebars.js', opts: { expose: 'handlebars' } },
-        { path: './js/moment.js', opts: { expose: 'moment' } },
-        { path: './js/backbone.js', opts: { expose: 'backbone' } },
-        { path: './js/marionette.js', opts: { expose: 'marionette' } },
-    ]);
-
-    b('./js/ext.js', 'ext.js', './dist', [], { standalone: 'smartfocus.ext' });
+    if (minify) {
+        task.pipe(uglify())
+            .pipe(rename('app.min.js'))
+            .pipe(gulp.dest('./dist'));
+    }
 });
 
 gulp.task('connect', ['find:port'], function () {
     var app = connect()
         .use(morgan('dev'))
-        .use(serveStatic('./'));
+        .use(serveStatic('./src/'))
+        .use(serveStatic('./dist/'));
     server = http.createServer(app).listen(port);
     log.info('server is listening to ' + port);
 });
 
 gulp.task('watch', function () {
-    gulp.watch('js/**/*', ['browserify']);
+    gulp.watch('./src/js/**/*.js', ['browserify']);
+    gulp.watch('./src/html/**/*.html', ['browserify']);
+    gulp.watch('./src/scss/**/*.scss', ['sass']);
     gulp.watch('gulpfile.js', ['server:stop', 'connect']);
 });
-
-gulp.task('server', ['browserify', 'watch', 'connect']);
 
 gulp.task('server:stop', function () {
     if (server && _.isFunction(server.close)) {
@@ -115,16 +112,26 @@ gulp.task('test', function () {
     }));
 });
 
-gulp.task('uglify', function () {
-    gulp.src('./dist/app.js')
-        .pipe(uglify())
-        .pipe(rename('app.min.js'))
-        .pipe(gulp.dest('./dist'));
+gulp.task('minify', function () {
+    minify = true;
 });
 
 gulp.task('lint', function () {
-    gulp.src('./js/**/*.js')
+    gulp.src('./src/js/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter(stylish))
         .pipe(jshint.reporter('fail'));
+});
+
+gulp.task('sass', function () {
+    var task = gulp.src('./src/scss/**/*.scss')
+        .pipe(sass())
+        .pipe(rename('main.css'))
+        .pipe(gulp.dest('./dist'));
+
+    if (minify) {
+        task.pipe(minifyCSS())
+            .pipe(rename('main.min.css'))
+            .pipe(gulp.dest('./dist'));
+    }
 });
