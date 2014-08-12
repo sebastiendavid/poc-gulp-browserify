@@ -11,7 +11,7 @@ var galleryTemplate = require('../html/gallery.html');
  *
  * Main module of the application.
  */
-angular.module('angularApp', [
+module.exports = angular.module('angularApp', [
     'ngCookies',
     'ngResource',
     'ngRoute',
