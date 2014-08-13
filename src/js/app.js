@@ -10,13 +10,7 @@ exports.deps = [
 ];
 
 exports.start = function (deps) {
-    var globals = require('./globals.js');
-
-    if (deps && deps.length > 0) {
-        for (var i = 0; i < deps.length; i++) {
-            globals.deps[exports.deps[i]] = deps[i];
-        }
-    }
+    require('./deps.js').add(deps, exports.deps);
 
     var angular = require('angular');
     var GalleryCtrl = require('./gallery.js');
