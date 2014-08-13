@@ -46,20 +46,24 @@
     });
 
     require(['q', './app'], function (Q, app) {
-        var getDeps = function (deps) {
-            var deferred = Q.defer();
-            try {
-                require(deps, function () {
-                    deferred.resolve(arguments);
-                });
-            } catch (e) {
-                deferred.reject(e);
-            }
-            return deferred.promise;
-        };
+        // with promise
+        // app({
+        //     getDeps: function (deps) {
+        //         var deferred = Q.defer();
+        //         try {
+        //             require(deps, function () {
+        //                 deferred.resolve(arguments);
+        //             });
+        //         } catch (e) {
+        //             deferred.reject(e);
+        //         }
+        //         return deferred.promise;
+        //     }
+        // });
 
-        app({
-            getDeps: getDeps
+        // without promise
+        require(app.deps, function () {
+            app.start(arguments);
         });
     });
 })(window.requirejs);
