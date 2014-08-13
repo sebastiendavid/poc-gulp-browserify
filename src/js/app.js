@@ -1,5 +1,13 @@
 'use strict';
-var exports = {};
+var exports = function (_opt) {
+    var opt = _opt || {};
+    if (typeof opt.getDeps === 'function') {
+        opt.getDeps(exports.deps)
+            .then(exports.addDeps)
+            .fail(console.error)
+            .done(exports.start);
+    }
+};
 
 exports.deps = [
     'angular',
@@ -9,8 +17,14 @@ exports.deps = [
     'angular-sanitize'
 ];
 
-exports.start = function (deps) {
+exports.addDeps = function (deps) {
     require('./deps.js').add(deps, exports.deps);
+};
+
+exports.start = function (deps) {
+    if (deps) {
+        exports.addDeps(deps);
+    }
 
     var angular = require('angular');
     var GalleryCtrl = require('./gallery.js');

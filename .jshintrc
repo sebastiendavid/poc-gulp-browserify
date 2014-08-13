@@ -23,10 +23,5 @@
     "nonew": true,
     "maxdepth": 4,
     "maxlen": 120,
-    "globals": {
-        "define": true,
-        "require": true,
-        "requirejs": true,
-        "casper": true
-    }
+    "globals": {}
 }

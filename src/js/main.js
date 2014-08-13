@@ -1,6 +1,6 @@
-(function () {
+(function (require) {
     'use strict';
-    requirejs.config({
+    require.config({
         baseUrl: './',
         paths: {
             'angular': 'angular/angular.min',
@@ -45,10 +45,21 @@
         }
     });
 
-    requirejs(['q', './app'], function (Q, app) {
-        requirejs(app.deps, function () {
-            console.info('dependencies loaded for angular app');
-            app.start(arguments);
+    require(['q', './app'], function (Q, app) {
+        var getDeps = function (deps) {
+            var deferred = Q.defer();
+            try {
+                require(deps, function () {
+                    deferred.resolve(arguments);
+                });
+            } catch (e) {
+                deferred.reject(e);
+            }
+            return deferred.promise;
+        };
+
+        app({
+            getDeps: getDeps
         });
     });
-})();
+})(window.requirejs);
