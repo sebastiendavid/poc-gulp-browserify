@@ -41,12 +41,14 @@ var log = {
 };
 
 gulp.task('default', ['server']);
-gulp.task('server', ['browserify', 'sass', 'html', 'watch', 'connect']);
-gulp.task('dist', ['minify', 'lint', 'test', 'browserify', 'sass', 'html']);
+gulp.task('server', ['copy', 'browserify', 'sass', 'html', 'watch', 'connect']);
+gulp.task('dist', ['minify', 'copy', 'lint', 'test', 'browserify', 'sass', 'html']);
 
 gulp.task('browserify', function () {
-    var task = gulp.src('./src/js/main.js')
-        .pipe(browserify())
+    var task = gulp.src('./src/js/app.js')
+        .pipe(browserify({
+            standalone: 'poc.app'
+        }))
         .on('prebundle', function (bundle) {
             bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
             bundle.require(require.resolve('./src/js/angular.js'), {
@@ -63,19 +65,24 @@ gulp.task('browserify', function () {
     }
 });
 
+gulp.task('copy', function () {
+    gulp.src('./src/js/main.js').pipe(gulp.dest('./dist'));
+});
+
 gulp.task('connect', ['find:port'], function () {
     var app = connect()
         .use(morgan('dev'))
-        .use(serveStatic('./dist/'));
+        .use(serveStatic('./dist/'))
+        .use(serveStatic('./bower_components/'));
     server = http.createServer(app).listen(port);
     log.info('server is listening to ' + port);
 });
 
 gulp.task('watch', function () {
-    gulp.watch('./src/js/**/*.js', ['browserify']);
+    gulp.watch('./src/js/**/*.js', ['copy', 'browserify']);
     gulp.watch('./src/html/**/*.html', ['browserify']);
     gulp.watch('./src/scss/**/*.scss', ['sass']);
-    gulp.watch('./src/index.html', ['html']);
+    gulp.watch('./src/index.hbs', ['html']);
     gulp.watch('gulpfile.js', ['server:stop', 'connect']);
 });
 

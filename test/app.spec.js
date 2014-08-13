@@ -4,7 +4,7 @@ var _ = require('lodash');
 var assert = require('assert');
 var proxyquire = require('proxyquire');
 
-describe('main.js', function () {
+describe('app.js', function () {
     var app;
 
     beforeEach(function () {
@@ -13,7 +13,7 @@ describe('main.js', function () {
         };
         template['@noCallThru'] = true;
 
-        app = proxyquire('../src/js/main.js', {
+        app = proxyquire('../src/js/app.js', {
             'angular': require('./angular.stub.js'),
             '../html/gallery.html': template
         });
@@ -23,26 +23,8 @@ describe('main.js', function () {
         // then
         assert.strictEqual(_.isUndefined(app), false);
         assert.strictEqual(_.isNull(app), false);
-        assert.strictEqual(_.isString(app.id), true);
-        assert.strictEqual(_.isEmpty(app.id), false);
         assert.strictEqual(_.isArray(app.deps), true);
         assert.strictEqual(_.isEmpty(app.deps), false);
-    });
-
-    it('should configure routes', function () {
-        // given
-        var routes = app['@routes'];
-
-        // then
-        assert.strictEqual(routes.hasOwnProperty('/gallery'), true);
-        assert.strictEqual(routes['@otherwise'].redirectTo, '/gallery');
-    });
-
-    it('should set template to gallery route', function () {
-        // given
-        var template = app['@routes']['/gallery'].template();
-
-        // then
-        assert.strictEqual(template, 'foobar');
+        assert.strictEqual(_.isFunction(app.start), true);
     });
 });
