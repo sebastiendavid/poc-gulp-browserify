@@ -1,13 +1,5 @@
 'use strict';
-var exports = function (_opt) {
-    var opt = _opt || {};
-    if (typeof opt.getDeps === 'function') {
-        opt.getDeps(exports.deps)
-            .then(exports.addDeps)
-            .fail(console.error)
-            .done(exports.start);
-    }
-};
+var exports = {};
 
 exports.deps = [
     'angular',
@@ -21,11 +13,8 @@ exports.addDeps = function (deps) {
     require('./deps.js').add(deps, exports.deps);
 };
 
-exports.start = function (deps) {
-    if (deps) {
-        exports.addDeps(deps);
-    }
-
+exports.start = function () {
+    exports.addDeps(arguments);
     var angular = require('angular');
     var GalleryCtrl = require('./gallery.js');
     var galleryTemplate = require('../html/gallery.html');

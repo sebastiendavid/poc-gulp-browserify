@@ -45,25 +45,7 @@
         }
     });
 
-    require(['q', './app'], function (Q, app) {
-        // with promise
-        // app({
-        //     getDeps: function (deps) {
-        //         var deferred = Q.defer();
-        //         try {
-        //             require(deps, function () {
-        //                 deferred.resolve(arguments);
-        //             });
-        //         } catch (e) {
-        //             deferred.reject(e);
-        //         }
-        //         return deferred.promise;
-        //     }
-        // });
-
-        // without promise
-        require(app.deps, function () {
-            app.start(arguments);
-        });
+    require(['./app'], function (app) {
+        require(app.deps, app.start);
     });
 })(window.requirejs);
