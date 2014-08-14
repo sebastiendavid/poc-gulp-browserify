@@ -11,7 +11,9 @@
             'jquery': 'jquery/dist/jquery.min',
             'lodash': 'lodash/dist/lodash.min',
             'moment': 'moment/min/moment.min',
-            'q': 'q/q'
+            'ocLazyLoad': 'ocLazyLoad/dist/ocLazyLoad.min',
+            'q': 'q/q',
+            'uuid': 'node-uuid/uuid'
         },
         shim: {
             'angular': {
@@ -39,13 +41,79 @@
             'moment': {
                 exports: 'moment'
             },
+            'ocLazyLoad': {
+                deps: ['angular']
+            },
             'q': {
                 exports: 'Q'
             }
         }
     });
 
-    require(['./app'], function (app) {
-        require(app.deps, app.start);
+    require(['jquery', 'lodash', 'q', 'uuid', 'angular', 'angular-cookies', 'angular-resource', 'angular-route',
+        'angular-sanitize', 'ocLazyLoad'
+    ], function ($, _, Q, uuid, angular) {
+
+        var app = angular.module('angularApp', [
+            'ngCookies',
+            'ngResource',
+            'ngRoute',
+            'ngSanitize',
+            'oc.lazyLoad'
+        ]);
+
+        var jsLoader = function (files, done) {
+            require(files, function (Widget) {
+                var widget = new Widget({
+                    uuid: uuid.v4()
+                });
+                require(widget.info.required, function () {
+                    widget.init.apply(widget, arguments);
+                    done();
+                });
+            });
+        };
+
+        app.config(['$ocLazyLoadProvider',
+            function ($ocLazyLoadProvider) {
+                $ocLazyLoadProvider.config({
+                    jsLoader: jsLoader
+                });
+            }
+        ]);
+
+        app.controller('MainCtrl', ['$scope', '$ocLazyLoad',
+            function ($scope, $ocLazyLoad) {
+                $scope.title = 'Angular application';
+                $scope.widgets = [];
+
+                $scope.loadWidget = function (widget) {
+                    $ocLazyLoad.load({
+                        name: widget.name,
+                        files: widget.files
+                    }).then(function () {
+                        widget.partial = widget.templateUrl;
+                    }, function (e) {
+                        throw e;
+                    });
+                };
+
+                $scope.widgets.push({
+                    name: 'foobarWidget2',
+                    files: ['./Foobar2'],
+                    templateUrl: 'foobar2.html',
+                    partial: ''
+                });
+                $scope.widgets.push({
+                    name: 'foobarWidget',
+                    files: ['./Foobar'],
+                    templateUrl: 'foobar.html',
+                    partial: ''
+                });
+            }
+        ]);
+
+        angular.bootstrap($('#main')[0], ['angularApp']);
     });
+
 })(window.requirejs);

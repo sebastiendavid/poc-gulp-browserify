@@ -1,13 +1,14 @@
 'use strict';
-var exports = {};
-
-exports.deps = [
-    'angular',
-    'angular-cookies',
-    'angular-resource',
-    'angular-route',
-    'angular-sanitize'
-];
+var exports = {
+    name: 'foobar',
+    deps: [
+        'angular',
+        'angular-cookies',
+        'angular-resource',
+        'angular-route',
+        'angular-sanitize'
+    ]
+};
 
 exports.addDeps = function (deps) {
     require('./deps.js').add(deps, exports.deps);

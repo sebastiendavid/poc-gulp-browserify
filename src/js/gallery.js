@@ -12,7 +12,7 @@ module.exports = function ($scope) {
     var categories = ['abstract', 'animals', 'business', 'cats', 'city', 'food', 'nightlife', 'fashion', 'people',
         'nature', 'sports', 'technics', 'transport'
     ];
-    var nbItems = 50;
+    var nbItems = 3;
     var category = 0;
 
     for (var i = 0, j = 0; i < nbItems; i++) {
@@ -28,4 +28,11 @@ module.exports = function ($scope) {
 
     $scope.title = 'Gallery';
     $scope.images = images;
+
+    $scope.add = function () {
+        $scope.images.push({
+            category: 'transport',
+            nb: 1
+        });
+    };
 };

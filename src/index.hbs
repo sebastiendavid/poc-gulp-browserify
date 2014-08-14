@@ -7,7 +7,16 @@
 </head>
 
 <body>
-    <div class="main" ng-view=""></div>
+    <div id="main" class="main" ng-controller="MainCtrl">
+        <h1 ng-bind="title"></h1>
+        <div id="widgets" class="widgets">
+            <div class="widget" ng-repeat="widget in widgets">
+                <div ng-init="loadWidget(widget)">
+                    <div ng-include="widget.partial"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="./requirejs/require.js" data-main="./main"></script>
 </body>
 

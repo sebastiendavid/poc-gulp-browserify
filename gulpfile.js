@@ -45,9 +45,9 @@ gulp.task('server', ['copy', 'browserify', 'sass', 'html', 'watch', 'connect']);
 gulp.task('dist', ['minify', 'copy', 'lint', 'test', 'browserify', 'sass', 'html']);
 
 gulp.task('browserify', function () {
-    var task = gulp.src('./src/js/app.js')
+    var task = gulp.src('./src/js/Foobar.js')
         .pipe(browserify({
-            standalone: 'poc.app'
+            standalone: 'poc.widgets.Foobar'
         }))
         .on('prebundle', function (bundle) {
             bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
@@ -55,12 +55,25 @@ gulp.task('browserify', function () {
                 expose: 'angular'
             });
         })
-        .pipe(rename('app.js'))
+        .pipe(rename('Foobar.js'))
+        .pipe(gulp.dest('./dist'));
+
+    gulp.src('./src/js/Foobar2.js')
+        .pipe(browserify({
+            standalone: 'poc.widgets.Foobar2'
+        }))
+        .on('prebundle', function (bundle) {
+            bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
+            bundle.require(require.resolve('./src/js/angular.js'), {
+                expose: 'angular'
+            });
+        })
+        .pipe(rename('Foobar2.js'))
         .pipe(gulp.dest('./dist'));
 
     if (minify) {
         task.pipe(uglify())
-            .pipe(rename('app.min.js'))
+            .pipe(rename('Foobar.min.js'))
             .pipe(gulp.dest('./dist'));
     }
 });

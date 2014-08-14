@@ -1,4 +1,7 @@
-<h1>{{ title }}</h1>
-<div>
-    <img ng-src="http://lorempixel.com/350/150/{{ image.category }}/{{ image.nb }}" ng-repeat="image in images" />
+<div data-ng-controller="GalleryCtrl">
+    <h1>{{ title }}</h1>
+    <div>
+        <img ng-src="http://lorempixel.com/350/150/{{ image.category }}/{{ image.nb }}" ng-repeat="image in images"
+            ng-click="add()"/>
+    </div>
 </div>
