@@ -1,16 +1,29 @@
 'use strict';
-var exports = function () {
-    this.required = [];
+var _ = require('lodash');
+var Widget = function (opt) {
+    if (!this.info || !this.info.name || !this.info.required) {
+        throw new Error('Widget\'s informations are missing');
+    }
+    this.initialize(opt);
+    return this;
 };
 
-exports.prototype.addDeps = function (deps) {
-    require('./deps.js').add(deps, this.required);
-};
+_.assign(Widget.prototype, {
+    initialize: function () {}
+});
 
-exports.prototype.start = function () {
-    this.addDeps(arguments);
-};
+_.assign(Widget, {
+    extend: function (props) {
+        var Func = function (opt) {
+            Widget.call(this, opt);
+            return this;
+        };
+        _(Func.prototype).assign(Widget.prototype).assign(props);
+        _(Func).assign({
+            extend: Widget.extend
+        });
+        return Func;
+    }
+});
 
-exports.prototype.extend = function () {
-
-};
+module.exports = Widget;

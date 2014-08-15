@@ -1,6 +1,6 @@
 'use strict';
-module.exports = require('./deps.js').get('angular');
+module.exports = (window || global).angular;
 
 if (!module.exports) {
-    throw new Error('Angular.js is not loaded');
+    throw new Error('Angular does not exists in global context');
 }

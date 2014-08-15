@@ -67,10 +67,7 @@
                 var widget = new Widget({
                     uuid: uuid.v4()
                 });
-                require(widget.info.required, function () {
-                    widget.init.apply(widget, arguments);
-                    done();
-                });
+                require(widget.info.required, done);
             });
         };
 
@@ -99,15 +96,9 @@
                 };
 
                 $scope.widgets.push({
-                    name: 'foobarWidget2',
-                    files: ['./Foobar2'],
-                    templateUrl: 'foobar2.html',
-                    partial: ''
-                });
-                $scope.widgets.push({
-                    name: 'foobarWidget',
-                    files: ['./Foobar'],
-                    templateUrl: 'foobar.html',
+                    name: 'GalleryWidget',
+                    files: ['./GalleryWidget'],
+                    templateUrl: 'GalleryWidget.html',
                     partial: ''
                 });
             }

@@ -3,11 +3,11 @@
 var _ = require('lodash');
 var assert = require('assert');
 
-describe('gallery.js', function () {
+describe('galleryCtrl.js', function () {
     var galleryCtrl;
 
     beforeEach(function () {
-        galleryCtrl = require('../src/js/gallery.js');
+        galleryCtrl = require('../src/js/galleryCtrl.js');
     });
 
     it('should gallery controller be a function', function () {

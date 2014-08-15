@@ -45,35 +45,25 @@ gulp.task('server', ['copy', 'browserify', 'sass', 'html', 'watch', 'connect']);
 gulp.task('dist', ['minify', 'copy', 'lint', 'test', 'browserify', 'sass', 'html']);
 
 gulp.task('browserify', function () {
-    var task = gulp.src('./src/js/Foobar.js')
+    var task = gulp.src('./src/js/GalleryWidget.js')
         .pipe(browserify({
-            standalone: 'poc.widgets.Foobar'
+            standalone: 'poc.widgets.gallery.Widget'
         }))
         .on('prebundle', function (bundle) {
             bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
             bundle.require(require.resolve('./src/js/angular.js'), {
                 expose: 'angular'
             });
-        })
-        .pipe(rename('Foobar.js'))
-        .pipe(gulp.dest('./dist'));
-
-    gulp.src('./src/js/Foobar2.js')
-        .pipe(browserify({
-            standalone: 'poc.widgets.Foobar2'
-        }))
-        .on('prebundle', function (bundle) {
-            bundle.transform(stringify(['.hbs', '.txt', '.html', '.json']));
-            bundle.require(require.resolve('./src/js/angular.js'), {
-                expose: 'angular'
+            bundle.require(require.resolve('./src/js/lodash.js'), {
+                expose: 'lodash'
             });
         })
-        .pipe(rename('Foobar2.js'))
+        .pipe(rename('GalleryWidget.js'))
         .pipe(gulp.dest('./dist'));
 
     if (minify) {
         task.pipe(uglify())
-            .pipe(rename('Foobar.min.js'))
+            .pipe(rename('GalleryWidget.min.js'))
             .pipe(gulp.dest('./dist'));
     }
 });
